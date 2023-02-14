@@ -1,0 +1,36 @@
+language: node_js
+node_js:
+- lts/*
+cache:
+  directories:
+  - node_modules
+install:
+- npm ci
+script:
+- npm run docs:build
+- cd docs/.vuepress/dist
+# - echo 'www.easyrentsh.xyz' > CNAME
+after_script:
+- git config credential.helper "store --file=.git/credentials"
+- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+- node ./node_modules/grunt-cli/bin/grunt release
+- git config --global user.email "1562055324@qq.com"
+- git config --global user.name "harryzq"
+- git init
+- git add .
+- git commit -m 'deploy'
+- git push -f "https://${GH_TOKEN}@github.com/harryzq/harryzq.github.io.git" master
+branches:
+  only:
+  - dev
+deploy:
+  provider: pages
+  skip-cleanup: true
+  local_dir: docs/.vuepress/dist
+  github_token: "$GH_TOKEN"
+  keep-history: true
+  on:
+    branch: dev
+env:
+  global:
+  - secure: k/ZYXmmMcsqal5bP+gEtDHQ6CSYx2GUwZpM2hqgXdpfUHRy38qtodoZ3R1IJzZ7n7hdBRMqtMVaPbOYHbn7DKJ50wKCANIwgy0Z1hRaAq1egIGsh3McJPisf45pJgg32SzpnzaRuB51m5TK0Xz7zIQF37Pn2TgXDbhOJYr2vxOsZzUsmCXoDpHkqRXs7P51KenJibx6JIg4YQMawBCkkwlNRhASZoM24pE7lE0TQ2V98hBqSKoCbzhaHE8Q2SruKUqRQ2fsDADaSSr/tZLBcyAp32KPlC86fokAMLKTiakBFvEiJu8Im8Fhcbh7BF+Qj/FARB4kQnzVw+A6VGwIK4U3ENgNsWrDbKVRsVh01UsrWb8VZJKKXfkpMsT8a4P4lRVQAukzZOADs8MC7MhGKt/5fg22gbfUfOQCstIcxiN6mk5/QMQhCORZCQINWvR/dixyPjTmERYQ0dKyeUUl+QvzCx89MJAz7UH9SWB/a/dZ2VOKTXqS3d64uvjr+9U13g6TaDx1WI7FjgSGmXvvAkNJkXxyQhGyjQasBLlow/1B9MZbgfZXJBwembFJG/b58iAxDArIkXD1gwcug/NwqKrhZBgWCZLtXfTPmsobvY3FKfcJEc2icx64sNXzmKl506V40mTzRUJGt/mlCdXonb+bagl4su2KgrQs8+4a4Yvs=
