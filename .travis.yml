@@ -15,11 +15,11 @@ after_script:
 - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
 - node ./node_modules/grunt-cli/bin/grunt release
 - git config --global user.email "1562055324@qq.com"
-- git config --global user.name "harryzq"
+- git config --global user.name "harrypangpang"
 - git init
 - git add .
 - git commit -m 'deploy'
-- git push -f "https://${GH_TOKEN}@github.com/harryzq/harryzq.github.io.git" master
+- git push -f "https://${GH_TOKEN}@github.com/harrypangpang/harrypangpang.github.io.git" master
 branches:
   only:
   - dev
