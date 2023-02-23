@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>vue-router实现 | HarryPangPang</title>
+  <meta name="description" content="vue-router实现 import Home from &quot;@&#x2F;views&#x2F;Home.vue&quot;; import Vue from &quot;vue&quot;;  class VueRouter &amp;#123;   [x: string]: any;   constructor(options: object) &amp;#123;     this.$options &#x3D; opti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue-router实现">
+<meta property="og:url" content="https://harrypangpang.github.io/2021/01/17/vue-router%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="HarryPangPangBlog">
+<meta property="og:description" content="vue-router实现 import Home from &quot;@&#x2F;views&#x2F;Home.vue&quot;; import Vue from &quot;vue&quot;;  class VueRouter &amp;#123;   [x: string]: any;   constructor(options: object) &amp;#123;     this.$options &#x3D; opti">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-17T06:06:45.000Z">
+<meta property="article:modified_time" content="2023-02-23T03:30:13.097Z">
+<meta property="article:author" content="HarryPangPang">
+<meta property="article:tag" content="源码">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://harrypangpang.github.io/2021/01/17/vue-router%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/HarryPangPang" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">HarryPangPang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">web developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 上海, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag">后端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" rel="tag">日常踩坑</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 13.5px;">后端</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13px;">安全</a> <a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 14px;">实践</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" style="font-size: 13px;">日常踩坑</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 13.5px;">源码</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 13px;">运维</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" class="title">centos安装node和docker</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-23T03:15:00.000Z" itemprop="datePublished">2023-02-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-20T03:41:21.000Z" itemprop="datePublished">2023-02-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/Gitlab%20cicd/" class="title">Gitlab ci/cd</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="title">docker部署jenkins</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-vue-router简单实现" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      vue-router实现
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/01/17/vue-router%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" class="article-date">
+	  <time datetime="2021-01-17T06:06:45.000Z" itemprop="datePublished">2021-01-17</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/01/17/vue-router%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="vue-router实现"><a class="markdownIt-Anchor" href="#vue-router实现"></a> vue-router实现</h3>
+<pre><code class="hljs plaintext">import Home from &quot;@/views/Home.vue&quot;;
+import Vue from &quot;vue&quot;;
+
+class VueRouter &#123;
+  [x: string]: any;
+  constructor(options: object) &#123;
+    this.$options = options;
+    this.routeMap = &#123;&#125;;
+    //挂在vue data上识别当前路由
+    this.app = new Vue(&#123;
+      data: &#123;
+        current: &quot;/&quot;
+      &#125;
+    &#125;);
+  &#125;
+  static install: (Vue: any) =&gt; void;
+  init() &#123;
+    this.bindEvent(); //监听路由变化
+    this.createRouteMap(); //构建路由键值对
+    this.initComponent(); //初始化router 的组件
+  &#125;
+  bindEvent() &#123;
+    window.addEventListener(&quot;load&quot;, this.onHashChange.bind(this));
+    window.addEventListener(&quot;hashchange&quot;, this.onHashChange.bind(this));
+  &#125;
+  //  hash变化时
+  onHashChange() &#123;
+    // 当前全局状态 current 就是目前hash对象的名称
+    this.app.current = window.location.hash.slice(1) || &quot;/&quot;;
+  &#125;
+  createRouteMap() &#123;
+  // 构建键值对以便找到模版
+    this.$options.routes.forEach((ele: object) =&gt; &#123;
+      this.routeMap[ele.path] = ele.component;
+    &#125;);
+  &#125;
+  initComponent() &#123;
+    // router-link,router-view
+    // &lt;router-link to=&quot;&quot;&gt;fff&lt;/router-link&gt;
+    Vue.component(&quot;router-link&quot;, &#123;
+      props: &#123; to: String &#125;,
+      render(h) &#123;
+      	//	h就是createElement 来创建VNode
+        // h(tag, data, children)
+        return h(&quot;a&quot;, &#123; attrs: &#123; href: &quot;#&quot; + this.to &#125; &#125;, [
+          this.$slots.default
+        ]);
+      &#125;
+    &#125;);
+    // &lt;router-view&gt;&lt;/router-view&gt;
+    Vue.component(&quot;router-view&quot;, &#123;
+      render: h =&gt; &#123;
+        const comp = this.routeMap[this.app.current];
+        return h(comp);
+      &#125;
+    &#125;);
+  &#125;
+&#125;
+VueRouter.install = function(Vue) &#123;
+  // 混入所有组件
+  Vue.mixin(&#123;
+    // 钩子函数
+    beforeCreate() &#123;
+      // 仅在根组件执行一次
+      if (this.$options.router) &#123;
+        Vue.prototype.$router = this.$options.router;
+        this.$options.router.init();
+      &#125;
+    &#125;
+  &#125;);
+&#125;;
+
+Vue.use(VueRouter);
+
+export default new VueRouter(&#123;
+  mode: &quot;history&quot;,
+  base: process.env.BASE_URL,
+  routes: [
+    &#123;
+      path: &quot;/&quot;,
+      name: &quot;Home&quot;,
+      component: Home
+    &#125;
+  ]
+&#125;);</code></pre>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2021/01/17/vue-router%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" title="vue-router实现" target="_blank" rel="external">https://harrypangpang.github.io/2021/01/17/vue-router简单实现/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/01/17/vue-property-decorator%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="vue-property-decorator使用指南"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/01/14/vuex%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" title="vuex简单版学习"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
+
+
+
+
+
+
+
+</body>
+</html>

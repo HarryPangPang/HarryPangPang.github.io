@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>react生命周期 | HarryPangPang</title>
+  <meta name="description" content="生命周期函数：在某一个时刻组件会自动调用执行的函数   React 生命周期   如图，React生命周期主要包括三个阶段：初始化阶段、运行中阶段和销毁阶段，在React不同的生命周期里，会依次触发不同的钩子函数，下面我们就来详细介绍一下React的生命周期函数   一、初始化阶段  1、设置组件的默认属性 static defaultProps &#x3D; &amp;#123;     name: &#39;sls&#39;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react生命周期">
+<meta property="og:url" content="https://harrypangpang.github.io/2019/01/27/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/index.html">
+<meta property="og:site_name" content="HarryPangPangBlog">
+<meta property="og:description" content="生命周期函数：在某一个时刻组件会自动调用执行的函数   React 生命周期   如图，React生命周期主要包括三个阶段：初始化阶段、运行中阶段和销毁阶段，在React不同的生命周期里，会依次触发不同的钩子函数，下面我们就来详细介绍一下React的生命周期函数   一、初始化阶段  1、设置组件的默认属性 static defaultProps &#x3D; &amp;#123;     name: &#39;sls&#39;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/11/11/88e11709488aeea3f9c6595ee4083bf3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="article:published_time" content="2019-01-27T08:30:48.000Z">
+<meta property="article:modified_time" content="2023-02-23T03:30:13.097Z">
+<meta property="article:author" content="HarryPangPang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2017/11/11/88e11709488aeea3f9c6595ee4083bf3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://harrypangpang.github.io/2019/01/27/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/HarryPangPang" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">HarryPangPang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">web developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 上海, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag">后端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" rel="tag">日常踩坑</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 13.5px;">后端</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13px;">安全</a> <a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 14px;">实践</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" style="font-size: 13px;">日常踩坑</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 13.5px;">源码</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 13px;">运维</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" class="title">centos安装node和docker</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-23T03:15:00.000Z" itemprop="datePublished">2023-02-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-20T03:41:21.000Z" itemprop="datePublished">2023-02-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/Gitlab%20cicd/" class="title">Gitlab ci/cd</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="title">docker部署jenkins</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-react生命周期" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      react生命周期
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/01/27/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="article-date">
+	  <time datetime="2019-01-27T08:30:48.000Z" itemprop="datePublished">2019-01-27</time>
+	</a>
+</span>
+        
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/01/27/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <blockquote>
+<p>生命周期函数：在某一个时刻组件会自动调用执行的函数</p>
+</blockquote>
+<h3 id="react-生命周期"><a class="markdownIt-Anchor" href="#react-生命周期"></a> React 生命周期</h3>
+<p><img src="https://user-gold-cdn.xitu.io/2017/11/11/88e11709488aeea3f9c6595ee4083bf3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+<blockquote>
+<p>如图，React生命周期主要包括三个阶段：初始化阶段、运行中阶段和销毁阶段，在React不同的生命周期里，会依次触发不同的钩子函数，下面我们就来详细介绍一下React的生命周期函数</p>
+</blockquote>
+<h4 id="一-初始化阶段"><a class="markdownIt-Anchor" href="#一-初始化阶段"></a> 一、初始化阶段</h4>
+<h5 id="1-设置组件的默认属性"><a class="markdownIt-Anchor" href="#1-设置组件的默认属性"></a> 1、设置组件的默认属性</h5>
+<pre><code>static defaultProps = &#123;
+    name: 'sls',
+    age:23
+&#125;;
+//or
+Counter.defaltProps=&#123;name:'sls'&#125;
+复制代码
+</code></pre>
+<h5 id="2-设置组件的初始化状态"><a class="markdownIt-Anchor" href="#2-设置组件的初始化状态"></a> 2、设置组件的初始化状态</h5>
+<pre><code>constructor() &#123;
+    super();
+    this.state = &#123;number: 0&#125;
+&#125;
+复制代码
+</code></pre>
+<h5 id="3-componentwillmount"><a class="markdownIt-Anchor" href="#3-componentwillmount"></a> 3、componentWillMount()</h5>
+<blockquote>
+<p>组件即将被渲染到页面之前触发，此时可以进行开启定时器、向服务器发送请求等操作</p>
+</blockquote>
+<h5 id="4-render"><a class="markdownIt-Anchor" href="#4-render"></a> 4、render()</h5>
+<blockquote>
+<p>组件渲染</p>
+</blockquote>
+<h5 id="5-componentdidmount"><a class="markdownIt-Anchor" href="#5-componentdidmount"></a> 5、componentDidMount()</h5>
+<blockquote>
+<p>组件已经被渲染到页面中后触发：此时页面中有了真正的DOM的元素，可以进行DOM相关的操作</p>
+</blockquote>
+<h4 id="二-运行中阶段"><a class="markdownIt-Anchor" href="#二-运行中阶段"></a> 二、运行中阶段</h4>
+<h5 id="1-componentwillreceiveprops"><a class="markdownIt-Anchor" href="#1-componentwillreceiveprops"></a> 1、componentWillReceiveProps()</h5>
+<blockquote>
+<p>组件接收到属性时触发</p>
+</blockquote>
+<h5 id="2-shouldcomponentupdate"><a class="markdownIt-Anchor" href="#2-shouldcomponentupdate"></a> 2、shouldComponentUpdate()</h5>
+<blockquote>
+<p>当组件接收到新属性，或者组件的状态发生改变时触发。组件首次渲染时并不会触发</p>
+</blockquote>
+<pre><code>shouldComponentUpdate(newProps, newState) &#123;
+    if (newProps.number &lt; 5) return true;
+    return false
+&#125;
+//该钩子函数可以接收到两个参数，新的属性和状态，返回true/false来控制组件是否需要更新。
+复制代码
+</code></pre>
+<blockquote>
+<p>一般我们通过该函数来优化性能：</p>
+</blockquote>
+<blockquote>
+<p>一个React项目需要更新一个小组件时，很可能需要父组件更新自己的状态。而一个父组件的重新更新会造成它旗下所有的子组件重新执行render()方法，形成新的虚拟DOM，再用diff算法对新旧虚拟DOM进行结构和属性的比较，决定组件是否需要重新渲染</p>
+</blockquote>
+<blockquote>
+<p>无疑这样的操作会造成很多的性能浪费，所以我们开发者可以根据项目的业务逻辑，在<code>shouldComponentUpdate()</code>中加入条件判断，从而优化性能</p>
+</blockquote>
+<blockquote>
+<p>例如React中的就提供了一个<code>PureComponent</code>的类，当我们的组件继承于它时，组件更新时就会默认先比较新旧属性和状态，从而决定组件是否更新。值得注意的是，<code>PureComponent</code>进行的是浅比较，所以组件状态或属性改变时，都需要返回一个新的对象或数组</p>
+</blockquote>
+<h5 id="3-componentwillupdate"><a class="markdownIt-Anchor" href="#3-componentwillupdate"></a> 3、componentWillUpdate()</h5>
+<blockquote>
+<p>组件即将被更新时触发</p>
+</blockquote>
+<h5 id="4-componentdidupdate"><a class="markdownIt-Anchor" href="#4-componentdidupdate"></a> 4、componentDidUpdate()</h5>
+<blockquote>
+<p>组件被更新完成后触发。页面中产生了新的DOM的元素，可以进行DOM操作</p>
+</blockquote>
+<h4 id="三-销毁阶段"><a class="markdownIt-Anchor" href="#三-销毁阶段"></a> 三、销毁阶段</h4>
+<h5 id="1-componentwillunmount"><a class="markdownIt-Anchor" href="#1-componentwillunmount"></a> 1、componentWillUnmount()</h5>
+<blockquote>
+<p>组件被销毁时触发。这里我们可以进行一些清理操作，例如清理定时器，取消Redux的订阅事件等等。</p>
+</blockquote>
+<h3 id="有兴趣的同学也可以用下面的代码进行测试"><a class="markdownIt-Anchor" href="#有兴趣的同学也可以用下面的代码进行测试"></a> 有兴趣的同学也可以用下面的代码进行测试</h3>
+<h4 id="废话少说放码过来"><a class="markdownIt-Anchor" href="#废话少说放码过来"></a> 废话少说，放码过来!</h4>
+<pre><code>import React from 'react'
+import ReactDOM from 'react-dom';
+
+class SubCounter extends React.Component &#123;
+    componentWillReceiveProps() &#123;
+        console.log('9、子组件将要接收到新属性');
+    &#125;
+
+    shouldComponentUpdate(newProps, newState) &#123;
+        console.log('10、子组件是否需要更新');
+        if (newProps.number &lt; 5) return true;
+        return false
+    &#125;
+
+    componentWillUpdate() &#123;
+        console.log('11、子组件将要更新');
+    &#125;
+
+    componentDidUpdate() &#123;
+        console.log('13、子组件更新完成');
+    &#125;
+
+    componentWillUnmount() &#123;
+        console.log('14、子组件将卸载');
+    &#125;
+
+    render() &#123;
+        console.log('12、子组件挂载中');
+        return (
+                &lt;p&gt;&#123;this.props.number&#125;&lt;/p&gt;
+        )
+    &#125;
+&#125;
+
+class Counter extends React.Component &#123;
+    static defaultProps = &#123;
+        //1、加载默认属性
+        name: 'sls',
+        age:23
+    &#125;;
+
+    constructor() &#123;
+        super();
+        //2、加载默认状态
+        this.state = &#123;number: 0&#125;
+    &#125;
+
+    componentWillMount() &#123;
+        console.log('3、父组件挂载之前');
+    &#125;
+
+    componentDidMount() &#123;
+        console.log('5、父组件挂载完成');
+    &#125;
+
+    shouldComponentUpdate(newProps, newState) &#123;
+        console.log('6、父组件是否需要更新');
+        if (newState.number&lt;15) return true;
+        return false
+    &#125;
+
+    componentWillUpdate() &#123;
+        console.log('7、父组件将要更新');
+    &#125;
+
+    componentDidUpdate() &#123;
+        console.log('8、父组件更新完成');
+    &#125;
+
+    handleClick = () =&gt; &#123;
+        this.setState(&#123;
+            number: this.state.number + 1
+        &#125;)
+    &#125;;
+
+    render() &#123;
+        console.log('4、render(父组件挂载)');
+        return (
+            &lt;div&gt;
+                &lt;p&gt;&#123;this.state.number&#125;&lt;/p&gt;
+                &lt;button onClick=&#123;this.handleClick&#125;&gt;+&lt;/button&gt;
+                &#123;this.state.number&lt;10?&lt;SubCounter number=&#123;this.state.number&#125;/&gt;:null&#125;
+            &lt;/div&gt;
+        )
+    &#125;
+&#125;
+ReactDOM.render(&lt;Counter/&gt;, document.getElementById('root'));
+</code></pre>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2019/01/27/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" title="react生命周期" target="_blank" rel="external">https://harrypangpang.github.io/2019/01/27/react生命周期/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/01/30/React%E8%99%9A%E6%8B%9Fdom%E5%92%8Cdiff%E7%AE%97%E6%B3%95/" title="React虚拟dom和diff算法"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/01/22/201901%E9%9D%A2%E8%AF%95%E9%A2%98%E5%88%86%E4%BA%AB/" title="201901面试题分享"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
+
+
+
+
+
+
+
+</body>
+</html>

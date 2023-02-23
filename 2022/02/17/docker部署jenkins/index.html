@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>docker部署jenkins | HarryPangPang</title>
+  <meta name="description" content="docker部署jenkins 如何使用docker部署Jenkins？按下面步骤走：  安装docker,mac用户可以使用  brew install docker 最好参照官网安装，一路next 2. 查看docker是否安装成功 执行： docker info 出现下面这样就是成功了 Server: Containers: 1   Running: 1   Paused: 0   Sto">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker部署jenkins">
+<meta property="og:url" content="https://harrypangpang.github.io/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/index.html">
+<meta property="og:site_name" content="HarryPangPangBlog">
+<meta property="og:description" content="docker部署jenkins 如何使用docker部署Jenkins？按下面步骤走：  安装docker,mac用户可以使用  brew install docker 最好参照官网安装，一路next 2. 查看docker是否安装成功 执行： docker info 出现下面这样就是成功了 Server: Containers: 1   Running: 1   Paused: 0   Sto">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-17T06:06:45.000Z">
+<meta property="article:modified_time" content="2023-02-23T03:30:13.096Z">
+<meta property="article:author" content="HarryPangPang">
+<meta property="article:tag" content="实践">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://harrypangpang.github.io/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/HarryPangPang" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">HarryPangPang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">web developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 上海, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag">后端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" rel="tag">日常踩坑</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 13.5px;">后端</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13px;">安全</a> <a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 14px;">实践</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" style="font-size: 13px;">日常踩坑</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 13.5px;">源码</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 13px;">运维</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" class="title">centos安装node和docker</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-23T03:15:00.000Z" itemprop="datePublished">2023-02-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-20T03:41:21.000Z" itemprop="datePublished">2023-02-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/Gitlab%20cicd/" class="title">Gitlab ci/cd</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="title">docker部署jenkins</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker部署jenkins" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker部署jenkins
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="article-date">
+	  <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h4 id="docker部署jenkins"><a class="markdownIt-Anchor" href="#docker部署jenkins"></a> docker部署jenkins</h4>
+<p>如何使用docker部署Jenkins？按下面步骤走：</p>
+<ol>
+<li>安装docker,mac用户可以使用</li>
+</ol>
+<pre><code class="hljs plaintext">brew install docker</code></pre>
+<p>最好参照官网安装，一路next<br />
+2. 查看docker是否安装成功<br />
+执行：</p>
+<pre><code class="hljs plaintext">docker info</code></pre>
+<p>出现下面这样就是成功了</p>
+<pre><code class="hljs plaintext">Server:
+Containers: 1
+  Running: 1
+  Paused: 0
+  Stopped: 0
+Images: 30
+Server Version: 19.03.2
+Storage Driver: overlay2
+  Backing Filesystem: extfs
+  Supports d_type: true
+  Native Overlay Diff: true
+Logging Driver: json-file
+Cgroup Driver: cgroupfs
+Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+Swarm: inactive
+Runtimes: runc
+Default Runtime: runc
+Init Binary: docker-init
+containerd version: 894b81a4b802e4eb2a91d1ce216b8817763c29fb
+runc version: 425e105d5a03fabd737a126ad93d62a9eeede87f
+init version: fec3683
+Security Options:
+  seccomp
+  Profile: default
+Kernel Version: 4.9.184-linuxkit
+Operating System: Docker Desktop
+OSType: linux
+Architecture: x86_64
+CPUs: 6
+Total Memory: 1.952GiB
+Name: docker-desktop
+ID: 3SL2:C77F:5JW2:IOHJ:SMTS
+...</code></pre>
+<ol start="3">
+<li>新建目录</li>
+</ol>
+<pre><code class="hljs plaintext">mkdir jenkins</code></pre>
+<ol start="4">
+<li>新建两个文件，分别是Dockerfile和docker-compose.yml<br />
+他们的区别可以看一下</li>
+</ol>
+<p>Dockerfile</p>
+<pre><code class="hljs plaintext">FROM openjdk:8-jdk
+
+RUN apt-get update &amp;&amp; apt-get install -y git curl &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+ARG user=jenkins
+ARG group=jenkins
+ARG uid=1000
+ARG gid=1000
+ARG http_port=8080
+ARG agent_port=50000
+
+ENV JENKINS_HOME /var/jenkins_home
+ENV JENKINS_SLAVE_AGENT_PORT $&#123;agent_port&#125;
+
+# Jenkins is run with user `jenkins`, uid = 1000
+# If you bind mount a volume from the host or a data container, 
+# ensure you use the same uid
+RUN groupadd -g $&#123;gid&#125; $&#123;group&#125; \
+    &amp;&amp; useradd -d &quot;$JENKINS_HOME&quot; -u $&#123;uid&#125; -g $&#123;gid&#125; -m -s /bin/bash $&#123;user&#125;
+
+# Jenkins home directory is a volume, so configuration and build history 
+# can be persisted and survive image upgrades
+VOLUME /var/jenkins_home
+
+# `/usr/share/jenkins/ref/` contains all reference configuration we want 
+# to set on a fresh new installation. Use it to bundle additional plugins 
+# or config file with your custom jenkins Docker image.
+RUN mkdir -p /usr/share/jenkins/ref/init.groovy.d
+
+ENV TINI_VERSION 0.14.0
+ENV TINI_SHA 6c41ec7d33e857d4779f14d9c74924cab0c7973485d2972419a3b7c7620ff5fd
+
+# Use tini as subreaper in Docker container to adopt zombie processes 
+RUN curl -fsSL https://github.com/krallin/tini/releases/download/v$&#123;TINI_VERSION&#125;/tini-static-amd64 -o /bin/tini &amp;&amp; chmod +x /bin/tini \
+  &amp;&amp; echo &quot;$TINI_SHA  /bin/tini&quot; | sha256sum -c -
+
+COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groovy
+
+# jenkins version being bundled in this docker image
+ARG JENKINS_VERSION
+ENV JENKINS_VERSION $&#123;JENKINS_VERSION:-2.60.3&#125;
+
+# jenkins.war checksum, download will be validated using it
+ARG JENKINS_SHA=2d71b8f87c8417f9303a73d52901a59678ee6c0eefcf7325efed6035ff39372a
+
+# Can be used to customize where jenkins.war get downloaded from
+ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/$&#123;JENKINS_VERSION&#125;/jenkins-war-$&#123;JENKINS_VERSION&#125;.war
+
+# could use ADD but this one does not check Last-Modified header neither does it allow to control checksum 
+# see https://github.com/docker/docker/issues/8331
+RUN curl -fsSL $&#123;JENKINS_URL&#125; -o /usr/share/jenkins/jenkins.war \
+  &amp;&amp; echo &quot;$&#123;JENKINS_SHA&#125;  /usr/share/jenkins/jenkins.war&quot; | sha256sum -c -
+
+ENV JENKINS_UC https://updates.jenkins.io
+ENV JENKINS_UC_EXPERIMENTAL=https://updates.jenkins.io/experimental
+RUN chown -R $&#123;user&#125; &quot;$JENKINS_HOME&quot; /usr/share/jenkins/ref
+
+# for main web interface:
+EXPOSE $&#123;http_port&#125;
+
+# will be used by attached slave agents:
+EXPOSE $&#123;agent_port&#125;
+
+ENV COPY_REFERENCE_FILE_LOG $JENKINS_HOME/copy_reference_file.log
+
+USER $&#123;user&#125;
+
+COPY jenkins-support /usr/local/bin/jenkins-support
+COPY jenkins.sh /usr/local/bin/jenkins.sh
+ENTRYPOINT [&quot;/bin/tini&quot;, &quot;--&quot;, &quot;/usr/local/bin/jenkins.sh&quot;]
+
+# from a derived Dockerfile, can use `RUN plugins.sh active.txt` to setup /usr/share/jenkins/ref/plugins from a support bundle
+COPY plugins.sh /usr/local/bin/plugins.sh
+COPY install-plugins.sh /usr/local/bin/install-plugins.sh</code></pre>
+<p>docker-compose.yml:</p>
+<pre><code class="hljs plaintext">version: &#x27;3&#x27;
+services:
+  jenkins:
+    build: .
+    image: &#x27;jenkins/jenkins:lts&#x27; #镜像
+    container_name: jenkins #容器名
+    restart: always
+    ports:
+      - &#x27;127.0.0.1:2001:8080&#x27; #本机端口号：容器端口
+      - &#x27;127.0.0.1:2002:50000&#x27;
+    volumes:
+      - &#x27;.:/var/jenkins_home&#x27; #数据持久目录,默认是当前目录</code></pre>
+<ol start="5">
+<li>启动容器</li>
+</ol>
+<pre><code class="hljs plaintext">docker-compose up -d</code></pre>
+<p>如果有报错的话，这个时候会提示，当有显示done时，就代表成功了。<br />
+6. 查看运行中容器</p>
+<pre><code class="hljs plaintext">docker-compose ps</code></pre>
+<p>你会看到</p>
+<pre><code class="hljs plaintext">Name                Command               State                          Ports                       
+------------------------------------------------------------------------------------------------------
+jenkins   /sbin/tini -- /usr/local/b ...   Up      127.0.0.1:2002-&gt;50000/tcp, 127.0.0.1:2001-&gt;8080/tcp</code></pre>
+<ol start="7">
+<li>打开浏览器输入127.0.0.1:2001或者服务器ip+:2001</li>
+</ol>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" title="docker部署jenkins" target="_blank" rel="external">https://harrypangpang.github.io/2022/02/17/docker部署jenkins/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/02/17/Gitlab%20cicd/" title="Gitlab ci/cd"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/02/17/gitpages%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/" title="github博客自动化部署"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
+
+
+
+
+
+
+
+</body>
+</html>

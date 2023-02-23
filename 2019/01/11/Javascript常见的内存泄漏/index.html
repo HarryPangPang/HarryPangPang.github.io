@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Javascript常见的内存泄漏 | HarryPangPang</title>
+  <meta name="description" content="什么是内存泄露？ 程序的运行需要内存。只要程序提出要求，操作系统或者运行时（runtime）就必须供给内存。 对于持续运行的服务进程（daemon），必须及时释放不再用到的内存。否则，内存占用越来越高，轻则影响系统性能，重则导致进程崩溃。 白话解释就是你写的代码里有些东西不用了，就别在保存再内存中了，不然好比你开了100个迅雷CPU卡不卡？卡，但你其实真正用到的只是其中一个迅雷。这就是内存泄漏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript常见的内存泄漏">
+<meta property="og:url" content="https://harrypangpang.github.io/2019/01/11/Javascript%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/index.html">
+<meta property="og:site_name" content="HarryPangPangBlog">
+<meta property="og:description" content="什么是内存泄露？ 程序的运行需要内存。只要程序提出要求，操作系统或者运行时（runtime）就必须供给内存。 对于持续运行的服务进程（daemon），必须及时释放不再用到的内存。否则，内存占用越来越高，轻则影响系统性能，重则导致进程崩溃。 白话解释就是你写的代码里有些东西不用了，就别在保存再内存中了，不然好比你开了100个迅雷CPU卡不卡？卡，但你其实真正用到的只是其中一个迅雷。这就是内存泄漏">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-11T07:42:13.000Z">
+<meta property="article:modified_time" content="2023-02-23T03:30:13.095Z">
+<meta property="article:author" content="HarryPangPang">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://harrypangpang.github.io/2019/01/11/Javascript%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/HarryPangPang" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">HarryPangPang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">web developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 上海, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag">后端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" rel="tag">日常踩坑</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 13.5px;">后端</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13px;">安全</a> <a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 14px;">实践</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" style="font-size: 13px;">日常踩坑</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 13.5px;">源码</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 13px;">运维</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" class="title">centos安装node和docker</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-23T03:15:00.000Z" itemprop="datePublished">2023-02-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-20T03:41:21.000Z" itemprop="datePublished">2023-02-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/Gitlab%20cicd/" class="title">Gitlab ci/cd</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="title">docker部署jenkins</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Javascript常见的内存泄漏" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Javascript常见的内存泄漏
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/01/11/Javascript%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" class="article-date">
+	  <time datetime="2019-01-11T07:42:13.000Z" itemprop="datePublished">2019-01-11</time>
+	</a>
+</span>
+        
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/01/11/Javascript%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <blockquote>
+<p>什么是内存泄露？<br />
+程序的运行需要内存。只要程序提出要求，操作系统或者运行时（runtime）就必须供给内存。<br />
+对于持续运行的服务进程（daemon），必须及时释放不再用到的内存。否则，内存占用越来越高，轻则影响系统性能，重则导致进程崩溃。<br />
+白话解释就是你写的代码里有些东西不用了，就别在保存再内存中了，不然好比你开了100个迅雷CPU卡不卡？卡，但你其实真正用到的只是其中一个迅雷。这就是内存泄漏</p>
+</blockquote>
+<p>想要理解JavaScript的内存泄漏，就要先了解一下js的自动垃圾收集机制</p>
+<h4 id="js的自动垃圾收集机制"><a class="markdownIt-Anchor" href="#js的自动垃圾收集机制"></a> js的自动垃圾收集机制</h4>
+<p>在编写JS时，我们不用像C++一样要手工跟踪内存的使用情况，JS的内存分配和无用内存的回收完全实现了自动化。</p>
+<p>JS常用的垃圾收集机制有两种：1. 标记清除 2. 引用计数</p>
+<ol>
+<li>标记清除<br />
+在函数声明一个变量的时候，就将这个变量标记为“进入环境”。从逻辑上讲，永远都不能释放进入环境的变量作占用的内存，因为只要执行流进入相应的环境，就可能会用到它们。而当变量离开环境时，则将其标记为“离开环境”。垃圾回收器在运行时候会给存储在内存中中的所有变量都加上标记。然后它会去掉环境中的变量以及被环境中的变量引用的变量的标记（闭包）。在此之后再被标记的变量将被视为准备删除的变量，原因是环境中的变量已经无法访问到这些变量了。最后，垃圾回收器完成内存清楚工作，销毁那些带标记的值并回收他们所占用的内存空间</li>
+</ol>
+<pre><code class="hljs plaintext"> 
+function test()&#123; 
+ var a = 10 ; //被标记 ，进入环境 
+ var b = 20 ; //被标记 ，进入环境 
+&#125; 
+test(); //执行完毕 之后 a、b又被标离开环境，被回收。</code></pre>
+<ol start="2">
+<li>引用计数（现代浏览器不再使用）<br />
+  引用计数的含义是跟踪记录每个值被引用的次数。当声明了一个变量并将一个引用类型值赋给该变量时，则这个值的引用次数就是1。如果同一个值又被赋给另一个变量，则该值的引用次数加1。相反，如果包含对这个值引用的变量又取得了另外一个值，则这个值的引用次数减1。当这个值的引用次数变成0时，则说明没有办法再访问这个值了，因而就可以将其占用的内存空间回收回来。这样，当垃圾回收器下次再运行时，它就会释放那些引用次数为0的值所占用的内存。</li>
+</ol>
+<p>但是很重要的一点是当遇到循环引用的时候，函数的引用次数就不会为0，所以不会被垃圾回收器回收内存，会造成内存泄露。在IE中涉及DOM对象，就会存在循环引用的问题。</p>
+<pre><code class="hljs plaintext">
+ 
+function test()&#123; 
+ var a = &#123;&#125; ; //a的引用次数为0 
+ 
+ var b = a ; //a的引用次数加1，为1 
+ 
+ var c =a; //a的引用次数再加1，为2 
+ 
+ var b =&#123;&#125;; //b解除对a的引用，a的引用次数减1，为1 
+&#125;
+
+// 循环引用
+function cycle() &#123;
+    var o1 = &#123;&#125;;
+    var o2 = &#123;&#125;;
+    o1.a = o2;
+    o2.a = o1; 
+
+    return &quot;cycle reference!&quot;
+&#125;
+cycle();
+
+//数组
+let arr = [1,2,3]
+
+虽然这里没有引用arr，arr对他的值发生了引用，所以会一直存在内存中，可以采用 arr=null来解除引用</code></pre>
+<p>虽然有了自动垃圾收集机制，我们可以不必太过关注一些内存泄漏的问题，但有些情况下还是会发生这种问题</p>
+<h4 id="js的常见内存泄漏"><a class="markdownIt-Anchor" href="#js的常见内存泄漏"></a> js的常见内存泄漏</h4>
+<ol>
+<li>全局变量引起的内存泄漏</li>
+</ol>
+<pre><code class="hljs plaintext">function leaks()&#123;  
+    leak = &#x27;xxxxxx&#x27;;//leak 成为一个全局变量，不会被回收
+&#125;</code></pre>
+<ol start="2">
+<li>闭包引起的内存泄漏</li>
+</ol>
+<pre><code class="hljs plaintext">var leaks = (function()&#123;  
+    var leak = &#x27;xxxxxx&#x27;;// 被闭包所引用，不会被回收
+    return function()&#123;
+        console.log(leak);
+    &#125;
+&#125;)()</code></pre>
+<ol start="3">
+<li>dom清空或删除时，事件未清除导致的内存泄漏</li>
+</ol>
+<pre><code class="hljs plaintext">&lt;div id=&quot;container&quot;&gt;  
+&lt;/div&gt;
+
+$(&#x27;#container&#x27;).bind(&#x27;click&#x27;, function()&#123;
+    console.log(&#x27;click&#x27;);
+&#125;).remove();
+
+// zepto 和原生 js下，#container dom 元素，还在内存里jquery 的 empty和 remove会帮助开发者避免这个问题
+
+&lt;div id=&quot;container&quot;&gt;  
+&lt;/div&gt;
+
+$(&#x27;#container&#x27;).bind(&#x27;click&#x27;, function()&#123;
+    console.log(&#x27;click&#x27;);
+&#125;).off(&#x27;click&#x27;).remove();
+//把事件清除了，即可从内存中移除</code></pre>
+<ol start="4">
+<li>计时器或回调函数<br />
+定时器setInterval</li>
+</ol>
+<pre><code class="hljs plaintext">var a = fun();
+setInterval(function()&#123;
+  var node = document.getElementById(&#x27;node&#x27;);
+  if(node)&#123;
+     node.innerHTML = &#x27;test&#x27;;
+  &#125;
+&#125;，1000);</code></pre>
+<p>节点node或数据不需要时，定时器setInterval依然指向这些数据，所以即使node节点被溢出，interval仍旧存活并且垃圾回收期没法回收。</p>
+<p>解决是终止定时器。</p>
+<p>这种循环定时器，是一定要设置关闭条件，然后将其clear并且将timer指向null]</p>
+<h4 id="解决方法及性能优化"><a class="markdownIt-Anchor" href="#解决方法及性能优化"></a> 解决方法及性能优化</h4>
+<p>发生内存泄漏肯定是不愿看到的，我们可以采取：<br />
+一旦确定数据不再使用，可以手动将其值设置为null来释放其引用。 —— 解除引用。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2019/01/11/Javascript%E5%B8%B8%E8%A7%81%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/" title="Javascript常见的内存泄漏" target="_blank" rel="external">https://harrypangpang.github.io/2019/01/11/Javascript常见的内存泄漏/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/01/14/Vue%E4%BD%BF%E7%94%A8%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/" title="Vue使用踩坑记录"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/01/11/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E7%82%B9190111/" title="前端知识点1901"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
+
+
+
+
+
+
+
+</body>
+</html>

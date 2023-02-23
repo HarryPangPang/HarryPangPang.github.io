@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>是时候谈谈JavaScript面向对象了 | HarryPangPang</title>
+  <meta name="description" content="前端技术尤其是JavaScript，经常被后端觉得不是正经编程语言，大多数是因为JavaScript是基于函数的语言，因此潜在上使得它在使用和发展上有所局限。 我记得在90年代末和21世纪初，JavaScript主要用于使html页面更加动态。比如实现一些弹窗，跑马灯之类的视觉效果。 现在，我们有很多框架，库，甚至后端系统都在使用JavaScript。用JavaScript开发一个移动应用和桌面应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="是时候谈谈JavaScript面向对象了">
+<meta property="og:url" content="https://harrypangpang.github.io/2019/05/14/%E6%98%AF%E6%97%B6%E5%80%99%E8%B0%88%E8%B0%88JavaScript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%BA%86/index.html">
+<meta property="og:site_name" content="HarryPangPangBlog">
+<meta property="og:description" content="前端技术尤其是JavaScript，经常被后端觉得不是正经编程语言，大多数是因为JavaScript是基于函数的语言，因此潜在上使得它在使用和发展上有所局限。 我记得在90年代末和21世纪初，JavaScript主要用于使html页面更加动态。比如实现一些弹窗，跑马灯之类的视觉效果。 现在，我们有很多框架，库，甚至后端系统都在使用JavaScript。用JavaScript开发一个移动应用和桌面应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/5/14/16ab412a436cc03d?w=707&amp;h=431&amp;f=png&amp;s=76202">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/5/14/16ab41e84a261066?w=514&amp;h=557&amp;f=png&amp;s=100265">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/5/14/16ab43201df8f7ec?w=659&amp;h=663&amp;f=png&amp;s=375922">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/5/14/16ab434d086a85ce?w=622&amp;h=661&amp;f=png&amp;s=312815">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/5/10/16aa05e97ba82933?w=258&amp;h=258&amp;f=jpeg&amp;s=28158">
+<meta property="article:published_time" content="2019-05-14T08:05:19.000Z">
+<meta property="article:modified_time" content="2023-02-23T03:30:13.100Z">
+<meta property="article:author" content="HarryPangPang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/5/14/16ab412a436cc03d?w=707&amp;h=431&amp;f=png&amp;s=76202">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://harrypangpang.github.io/2019/05/14/%E6%98%AF%E6%97%B6%E5%80%99%E8%B0%88%E8%B0%88JavaScript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%BA%86/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/HarryPangPang" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">HarryPangPang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">web developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 上海, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag">后端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" rel="tag">日常踩坑</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 13.5px;">后端</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13px;">安全</a> <a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 14px;">实践</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" style="font-size: 13px;">日常踩坑</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 13.5px;">源码</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 13px;">运维</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" class="title">centos安装node和docker</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-23T03:15:00.000Z" itemprop="datePublished">2023-02-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-20T03:41:21.000Z" itemprop="datePublished">2023-02-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/Gitlab%20cicd/" class="title">Gitlab ci/cd</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="title">docker部署jenkins</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-是时候谈谈JavaScript面向对象了" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      是时候谈谈JavaScript面向对象了
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2019/05/14/%E6%98%AF%E6%97%B6%E5%80%99%E8%B0%88%E8%B0%88JavaScript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%BA%86/" class="article-date">
+	  <time datetime="2019-05-14T08:05:19.000Z" itemprop="datePublished">2019-05-14</time>
+	</a>
+</span>
+        
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/05/14/%E6%98%AF%E6%97%B6%E5%80%99%E8%B0%88%E8%B0%88JavaScript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%BA%86/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>前端技术尤其是JavaScript，经常被后端觉得不是正经编程语言，大多数是因为JavaScript是基于函数的语言，因此潜在上使得它在使用和发展上有所局限。</p>
+<p>我记得在90年代末和21世纪初，JavaScript主要用于使html页面更加动态。比如实现一些弹窗，跑马灯之类的视觉效果。</p>
+<p>现在，我们有很多框架，库，甚至后端系统都在使用JavaScript。用JavaScript开发一个移动应用和桌面应用程序-在以前是闻所未闻的，但如今，这些我们经常听说甚至已经投入使用了。现在我们还可以用JavaScript实现跨平台开发！</p>
+<p>JavaScript无处不在，你可以使用JavaScript轻松完成很多有趣的东西。但随之而来的是潜在的长期问题。许多JavaScript开发者并没有像java开发者一样习惯使用面向对象编程，或者说没有面向对象编程这方面的训练。这很正常，因为我们经常为了追赶进度完成手头的工作，忽略了一些我们还不知道的内容</p>
+<h3 id="什么是面向对象编程"><a class="markdownIt-Anchor" href="#什么是面向对象编程"></a> 什么是面向对象编程？</h3>
+<p>面向对象的编程是一种思想，一种心态。它背后的想法是，你为你想象中的对象创建了一个蓝图，然后一次又一次地调用它来完成各种各样的功能。每次你想使用一个对象时，你必须先创建它这样它才会存在，然后设置它的属性，以便使用附加到它的功能。这些功能被称为“方法”。</p>
+<p>例如，一个CustomerOrder对象可能附加了一个GET：Order Details功能(又名方法)。</p>
+<pre><code class="hljs plaintext">//基于类
+class CustomerOrder&#123;
+  constructor(customerId,orderId)&#123;
+    this.customerId = customerId;
+    this.orderId = orderId
+  &#125;
+  get orderDetails()&#123;
+    return this.pullOrderDetails();
+  &#125;
+  pullOrderDetails()&#123;
+    //一些操作
+    return 
+  &#125;
+&#125;
+const order_1 = new CustomerOrder(87873,&quot;Cus-001&quot;)
+
+console.log(order_1.orderDetails)</code></pre>
+<p>我们来看另一个基于函数的方法：</p>
+<pre><code class="hljs plaintext">//基于函数
+const customerId = 8787
+const orderId = &quot;Cus-001&quot;
+function pullOrderDetails(customerId,orderId)&#123;
+  //一些操作
+  return
+&#125;
+console.log(pullOrderDetails(87873,&quot;Cus-001&quot;))</code></pre>
+<p>上面的问题在于，函数的数量多起来时，很快就会变得混乱。虽然将所有内容都编写为函数，然后根据需要来调用，在一开始可能会很方便，但是日积月累，函数之间的关联关系错综复杂，一旦发生变更，你可能需要修改很多函数，也会引起很多未知问题。</p>
+<p>可能有些难理解，我们看下面的图（使用类的情况）：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/5/14/16ab412a436cc03d?w=707&amp;h=431&amp;f=png&amp;s=76202" alt="" /></p>
+<p>constructor是设置变量的地方，Getter和setter方法是类做事的入口。使用什么函数以及如何使用它们都是隐藏的。每次创建一个新对象时，整个类及其方法都会被“克隆”，并可访问需要的内容。发生变更时，我们也只需要在类上一次修改，便可以全局生效。</p>
+<p>我们再看下面的图（使用函数的情况）</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/5/14/16ab41e84a261066?w=514&amp;h=557&amp;f=png&amp;s=100265" alt="" /></p>
+<p>当我们用一堆松散的函数编写代码时，它的更改范围通常没有定义。依赖项注入是使函数正常工作所必需的，而一个函数常常需要另一个函数才能正常工作。从表面上看，基于函数的编程可能一开始看起来很简单，但从长远来看，维护它是一个逻辑上的噩梦。</p>
+<p>使用面向对象编程，您只需要调用getter和setter方法来访问黑盒功能。作为类的消费者，你不需要知道它是如何工作的。你只需要知道它是有效的。</p>
+<h3 id="为什么我们要在javascript中采用面向对象编程"><a class="markdownIt-Anchor" href="#为什么我们要在javascript中采用面向对象编程"></a> 为什么我们要在JavaScript中采用面向对象编程</h3>
+<p>上面的两幅图能看出来，过度依赖基于函数的编程可能很快就能完成任务，但是长远来看，这会存在很高的风险。</p>
+<p>随着代码量的增长，你就需要改变组织代码的思维方式，并考虑采用面向对象。与通过一系列依赖注入串在一起的函数相比，对象的则更容易追踪和掌握。</p>
+<p>下面的代码是基于函数：<br />
+<img src="https://user-gold-cdn.xitu.io/2019/5/14/16ab43201df8f7ec?w=659&amp;h=663&amp;f=png&amp;s=375922" alt="" /><br />
+你会需要知道整个调用链，以便弄清楚如何实现你的目的。当然也很乱，不易理解。</p>
+<p>基于函数的编程的问题是，链的中断可能导致整个流程的失败。对于对象，一个被破坏的方法不会(也不应该)影响类的其他部分。</p>
+<p>下面的代码是基于类（面向对象）：<br />
+<img src="https://user-gold-cdn.xitu.io/2019/5/14/16ab434d086a85ce?w=622&amp;h=661&amp;f=png&amp;s=312815" alt="" /></p>
+<p>这种方法，可能代码量不会少多少，但你可以复用它，而不需要写很长的调用链。</p>
+<p>当你思考问题时，是基于类，而不是一系列相互关联的函数时，代码自然会减少出现问题的风险。因为每一次依赖注入都会增加一次潜在错误的可能，而且寻找错误时，也会花费更多的时间和精力。、</p>
+<h3 id="最后"><a class="markdownIt-Anchor" href="#最后"></a> 最后</h3>
+<p>面向对象编程是一种主动的行为，你可以选择使用，也可以选择不使用。随着前端体系的日益庞大，代码量和应用场景也远超于从前，我们更需要思考面向对象编程的重要性。</p>
+<p>面向对象编程的资料：</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Objects/Object-oriented_JS">https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Objects/Object-oriented_JS</a></p>
+<p>———————————————————————————————————————————————————</p>
+<p>放学别走！长按二维码关注 【技术人生路】，无偿免费获取前端学习进阶资料，培训实战视频，就业指导等众多福利哦。我相信我们都是爱学习爱进步的呀！</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/5/10/16aa05e97ba82933?w=258&amp;h=258&amp;f=jpeg&amp;s=28158" alt="" /></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2019/05/14/%E6%98%AF%E6%97%B6%E5%80%99%E8%B0%88%E8%B0%88JavaScript%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%BA%86/" title="是时候谈谈JavaScript面向对象了" target="_blank" rel="external">https://harrypangpang.github.io/2019/05/14/是时候谈谈JavaScript面向对象了/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/01/14/vuex%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/" title="vuex简单版学习"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/05/10/%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8EVS%E5%87%BD%E6%95%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F/" title="函数声明？函数表达式？我该怎么选？！"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
+
+
+
+
+
+
+
+</body>
+</html>

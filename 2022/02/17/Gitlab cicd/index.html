@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Gitlab ci/cd | HarryPangPang</title>
+  <meta name="description" content="Gitlab ci&#x2F;cd   持续集成 开发-测试-集成测试   持续交付   持续部署   #事先安装好docker，下载地址：https:&#x2F;&#x2F;docs.docker.com&#x2F; #拉取gitlab-runner镜像 docker pull gitlab&#x2F;gitlab-runner  2. &#96;&#96;&#96;shell    #在shell里运行下面的命令，注意一下volume映射    #-v $HOME">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gitlab ci&#x2F;cd">
+<meta property="og:url" content="https://harrypangpang.github.io/2022/02/17/Gitlab%20cicd/index.html">
+<meta property="og:site_name" content="HarryPangPangBlog">
+<meta property="og:description" content="Gitlab ci&#x2F;cd   持续集成 开发-测试-集成测试   持续交付   持续部署   #事先安装好docker，下载地址：https:&#x2F;&#x2F;docs.docker.com&#x2F; #拉取gitlab-runner镜像 docker pull gitlab&#x2F;gitlab-runner  2. &#96;&#96;&#96;shell    #在shell里运行下面的命令，注意一下volume映射    #-v $HOME">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://harrypangpang.github.io/Users/qiang.zhang/Desktop/%E6%88%AA%E5%B1%8F2020-04-08%E4%B8%8B%E5%8D%884.20.04.png">
+<meta property="og:image" content="https://harrypangpang.github.io/Users/qiang.zhang/Desktop/%E6%88%AA%E5%B1%8F2020-04-08%E4%B8%8B%E5%8D%884.22.27.png">
+<meta property="og:image" content="https://harrypangpang.github.io/Users/qiang.zhang/Desktop/%E6%88%AA%E5%B1%8F2020-04-08%E4%B8%8B%E5%8D%884.25.06.png">
+<meta property="article:published_time" content="2022-02-17T06:06:45.000Z">
+<meta property="article:modified_time" content="2023-02-23T03:30:13.095Z">
+<meta property="article:author" content="HarryPangPang">
+<meta property="article:tag" content="实践">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://harrypangpang.github.io/Users/qiang.zhang/Desktop/%E6%88%AA%E5%B1%8F2020-04-08%E4%B8%8B%E5%8D%884.20.04.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://harrypangpang.github.io/2022/02/17/Gitlab%20cicd/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css">
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/HarryPangPang" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">HarryPangPang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">web developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 上海, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag">后端</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" rel="tag">日常踩坑</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 13.5px;">后端</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13px;">安全</a> <a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 14px;">实践</a> <a href="/tags/%E6%97%A5%E5%B8%B8%E8%B8%A9%E5%9D%91/" style="font-size: 13px;">日常踩坑</a> <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 13.5px;">源码</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 13px;">运维</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">二月 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/02/">二月 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" class="title">centos安装node和docker</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-23T03:15:00.000Z" itemprop="datePublished">2023-02-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/21/xss%E6%94%BB%E5%87%BB/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-21T02:41:21.000Z" itemprop="datePublished">2023-02-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="title">短链接实现原理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-02-20T03:41:21.000Z" itemprop="datePublished">2023-02-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/Gitlab%20cicd/" class="title">Gitlab ci/cd</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" class="title">docker部署jenkins</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Gitlab cicd" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Gitlab ci/cd
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2022/02/17/Gitlab%20cicd/" class="article-date">
+	  <time datetime="2022-02-17T06:06:45.000Z" itemprop="datePublished">2022-02-17</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2022/02/17/Gitlab%20cicd/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h4 id="gitlab-cicd"><a class="markdownIt-Anchor" href="#gitlab-cicd"></a> Gitlab ci/cd</h4>
+<ol>
+<li>
+<p>持续集成 开发-测试-集成测试</p>
+</li>
+<li>
+<p>持续交付</p>
+</li>
+<li>
+<p>持续部署</p>
+</li>
+<li>
+<pre class="highlight"><code class="shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">事先安装好docker，下载地址：https://docs.docker.com/</span>
+<span class="hljs-meta prompt_">#</span><span class="language-bash">拉取gitlab-runner镜像</span>
+docker pull gitlab/gitlab-runner
+<pre><code class="hljs plaintext">
+2. ```shell
+   #在shell里运行下面的命令，注意一下volume映射
+   #-v $HOME/gitlab-runner-volume/config:/etc/gitlab-runner \这一行的#\这一行的 $HOME/gitlab-runner-volume/config $HOME可以改成任意本地目录，之后会用到
+   # -v /var/run/docker.sock:/var/run/docker.sock \ 这一行的/var/run/docker.sock在win下可能有问题，需要找一下docker的安装位置
+   docker run -d \
+     --name gitlab-runner \
+     --restart always \
+     -v $HOME/gitlab-runner-volume/config:/etc/gitlab-runner \
+     -v /var/run/docker.sock:/var/run/docker.sock \
+     gitlab/gitlab-runner:latest</code></pre>
+
+</code></pre>
+</li>
+<li>
+<pre class="highlight"><code class="shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">如果需要更新镜像，可以走这一步，否则跳过即可</span>
+docker pull gitlab/gitlab-runner:latest
+docker stop gitlab-runner &amp;&amp; docker rm gitlab-runner
+
+docker run -d \
+  --name gitlab-runner \
+  --restart always \
+  -v $HOME/gitlab-runner-volume/config:/etc/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  gitlab/gitlab-runner:latest
+
+<pre><code class="hljs plaintext">
+4. ```shell
+   # 注册gitlab-runner 参考https://docs.gitlab.com/runner/register/
+   docker run --rm -t -i -v $HOME/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner register</code></pre>
+
+</code></pre>
+</li>
+<li>
+<p>这时候打开你的gitlab</p>
+<p><img src="/Users/qiang.zhang/Desktop/%E6%88%AA%E5%B1%8F2020-04-08%E4%B8%8B%E5%8D%884.20.04.png" alt="截屏2020-04-08下午4.20.04" /></p>
+<p><img src="/Users/qiang.zhang/Desktop/%E6%88%AA%E5%B1%8F2020-04-08%E4%B8%8B%E5%8D%884.22.27.png" alt="截屏2020-04-08下午4.22.27" /></p>
+<pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">上一步之后，会有一堆问题回答</span>
+Runtime platform                                    arch=amd64 os=linux pid=7 revision=4c96e5ad version=12.9.0
+Running in system-mode.                            
+                                                   
+Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
+<span class="hljs-meta prompt_">#</span><span class="language-bash">上图3的网址</span>
+Please enter the gitlab-ci token for this runner:
+<span class="hljs-meta prompt_">#</span><span class="language-bash">上图4的地址</span>
+Please enter the gitlab-ci description for this runner:
+[3a594927a932]: vue typescript template
+Please enter the gitlab-ci tags for this runner (comma separated):
+<span class="hljs-meta prompt_">#</span><span class="language-bash">自己定义的标签，比如<span class="hljs-built_in">test</span>,dev</span>
+Registering runner... succeeded                     runner=aPsdGq2A
+Please enter the executor: docker-ssh, parallels, ssh, virtualbox, custom, docker, shell, docker+machine, docker-ssh+machine, kubernetes:
+<span class="hljs-meta prompt_">#</span><span class="language-bash">写 docker</span>
+Please enter the default Docker image (e.g. ruby:2.6):
+<span class="hljs-meta prompt_">#</span><span class="language-bash">写 alpine:latest</span>
+Runner registered successfully. Feel free to start it, but if it&#x27;s running already the config should be automatically reloaded!</code></pre>
+<p>回到你的gitlab，你就能看到下面的东西</p>
+<p><img src="/Users/qiang.zhang/Desktop/%E6%88%AA%E5%B1%8F2020-04-08%E4%B8%8B%E5%8D%884.25.06.png" alt="截屏2020-04-08下午4.25.06" /></p>
+</li>
+<li>
+<pre class="highlight"><code class="shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">运行下面的命令查看是否有问题</span>
+docker logs gitlab-runner
+<pre><code class="hljs plaintext">
+如果看到下面的错误，就证明docker没有生成config.toml，需要手动从之前定义的$HOME下找到config.toml复制到docker里
+</code></pre>
+ERROR: Failed to load config stat /etc/gitlab-runner/config.toml: no such file or directory  builds=0
+<span class="hljs-meta prompt_">#</span><span class="language-bash">或者下面的</span>
+ERROR: Failed to load config stat /etc/gitlab-runner/config.toml: no such file or directory  builds=0
+ERROR: Failed to load config stat /etc/gitlab-runner/config.toml: no such file or directory  builds=0
+ERROR: Failed to load config stat /etc/gitlab-runner/config.toml: no such file or directory  builds=0
+ERROR: Failed to load config stat /etc/gitlab-runner/config.toml: no such file or directory  builds=0
+ERROR: Failed to load config stat /etc/gitlab-runner/config.toml: no such file or directory  builds=0
+<pre><code class="hljs plaintext">
+解决步骤：
+</code></pre>
+docker ps -a
+<span class="hljs-meta prompt_">#</span><span class="language-bash">看到类似下面这样的，复制CONTAINER ID</span>
+<span class="hljs-meta prompt_">#</span><span class="language-bash">CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS                      PORTS                      NAMES</span>
+c324fdf55c20        bfb85bb1e211                  &quot;gitlab-runner-helpe…&quot;   24 minutes ago      Exited (0) 24 minutes ago                              runner
+<span class="hljs-meta prompt_">
+#</span><span class="language-bash">接着下面的走</span>
+docker exec -it 刚才复制的containerid /bin/sh
+cd /etc/gitlab-runner
+touch config.toml
+vi config.toml
+然后就是把本地的config.toml贴进去进行
+<pre><code class="hljs plaintext">
+7. 再执行
+</code></pre>
+<span class="hljs-meta prompt_">#</span><span class="language-bash">
+Configuration loaded                                builds=0</span>
+Configuration loaded                                builds=0
+Checking for jobs... received                       job=872 repo_url=https://gitlab.jingle.cn/websh/ff_event_vue_template.git runner=ejiRy6v7
+WARNING: Failed to parse &quot;X-GitLab-Trace-Update-Interval&quot; header  error=strconv.Atoi: parsing &quot;&quot;: invalid syntax header-value= job=872 runner=ejiRy6v7
+WARNING: Failed to parse &quot;X-GitLab-Trace-Update-Interval&quot; header  error=strconv.Atoi: parsing &quot;&quot;: invalid syntax header-value= job=872 runner=ejiRy6v7
+WARNING: Failed to parse &quot;X-GitLab-Trace-Update-Interval&quot; header  error=strconv.Atoi: parsing &quot;&quot;: invalid syntax header-value= job=872 runner=ejiRy6v7
+WARNING: Failed to parse &quot;X-GitLab-Trace-Update-Interval&quot; header  error=strconv.Atoi: parsing &quot;&quot;: invalid syntax header-value= job=872 runner=ejiRy6v7
+WARNING: Failed to parse &quot;X-GitLab-Trace-Update-Interval&quot; header  error=strconv.Atoi: parsing &quot;&quot;: invalid syntax header-value= job=872 runner=ejiRy6v7
+WARNING: Failed to parse &quot;X-GitLab-Trace-Update-Interval&quot; header  error=strconv.Atoi: parsing &quot;&quot;: invalid syntax header-value= job=872 runner=ejiRy6v7
+Job succeeded                                       duration=27.6497334s job=872 project=42 runner=ejiRy6v7
+WARNING: Failed to parse &quot;X-GitLab-Trace-Update-Interval&quot; header  error=strconv.Atoi: parsing &quot;&quot;: invalid syntax header-value= job=872 runner=ejiRy6v7
+<pre><code class="hljs plaintext">
+   
+
+8. 然后我们在项目的根目录创建一个.gitlab-ci.yml
+</code></pre>
+test_job_1:
+    tags:
+        - dev
+    script:
+        - echo Hello world
+<pre><code class="hljs plaintext">
+   
+
+9. 再push上去的时候就能看到成功了
+
+![截屏2020-04-08下午4.47.27](/Users/qiang.zhang/Desktop/截屏2020-04-08下午4.47.27.png)
+
+附：
+</code></pre>
+</code></pre>
+</li>
+</ol>
+<p>image: node:latest<br />
+cache:<br />
+paths:<br />
+- node_modules/<br />
+before_script:<br />
+- node -v<br />
+- npm -v<br />
+- npm install<br />
+stages:</p>
+<ul>
+<li>development<br />
+test_job_1:<br />
+tags:<br />
+- dev<br />
+stage: development<br />
+script:<br />
+- npm run tpl<br />
+- npm run build</li>
+</ul>
+<pre class="highlight"><code class="">
+</code></pre>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2022/02/17/Gitlab%20cicd/" title="Gitlab ci/cd" target="_blank" rel="external">https://harrypangpang.github.io/2022/02/17/Gitlab cicd/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+           
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2023/02/20/%E7%9F%AD%E9%93%BE%E6%8E%A5%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" title="短链接实现原理"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/" title="docker部署jenkins"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/HarryPangPang" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="https://github.com/HarryPangPang/HarryPangPang.github.io/issues/4" target="_blank" title="Email" data-toggle=tooltip data-placement=top><i class="icon icon-email"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
+
+
+
+
+
+
+
+</body>
+</html>
