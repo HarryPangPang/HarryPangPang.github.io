@@ -8,3 +8,4 @@ public/
 _multiconfig.yml
 .deploy_git
 .deploy_git/.git
+.deploy*
