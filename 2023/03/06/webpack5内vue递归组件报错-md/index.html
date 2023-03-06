@@ -17,18 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>HarryPangPang</title>
-  <meta name="description" content="HarryPangPang blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="HarryPangPangBlog">
-<meta property="og:url" content="https://harrypangpang.github.io/page/4/index.html">
+  <title>webpack5内vue递归组件报错.md | HarryPangPang</title>
+  <meta name="description" content="今天在一个webpack4升级到webpack5后的项目中，遇到了一个问题： 页面打开后，提示如下报错： ReferenceError: Cannot access &amp;#x27;__WEBPACK_DEFAULT_EXPORT__&amp;#x27; before initialization at Module.default (155747:3:42) at eval (index.vue?d775:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack5内vue递归组件报错.md">
+<meta property="og:url" content="https://harrypangpang.github.io/2023/03/06/webpack5%E5%86%85vue%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6%E6%8A%A5%E9%94%99-md/index.html">
 <meta property="og:site_name" content="HarryPangPangBlog">
-<meta property="og:description" content="HarryPangPang blog">
+<meta property="og:description" content="今天在一个webpack4升级到webpack5后的项目中，遇到了一个问题： 页面打开后，提示如下报错： ReferenceError: Cannot access &amp;#x27;__WEBPACK_DEFAULT_EXPORT__&amp;#x27; before initialization at Module.default (155747:3:42) at eval (index.vue?d775:">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-06T10:23:13.000Z">
+<meta property="article:modified_time" content="2023-03-06T10:29:07.481Z">
 <meta property="article:author" content="HarryPangPang">
+<meta property="article:tag" content="前端">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://harrypangpang.github.io/page/4/index.html">
+  <link rel="canonical" href="https://harrypangpang.github.io/2023/03/06/webpack5%E5%86%85vue%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6%E6%8A%A5%E9%94%99-md/index.html">
   
     <link rel="alternate" href="/atom.xml" title="HarryPangPangBlog" type="application/atom+xml">
   
@@ -313,309 +316,143 @@
 </aside>
 
   
-  <main class="main" role="main">
   
-  <div class="content article-list">
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-webpack5内vue递归组件报错-md" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
+    <div class="article-header">
+      
+        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/10/%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/">函数柯里化（curry)</a>
+    <h1 class="article-title" itemprop="name">
+      webpack5内vue递归组件报错.md
     </h1>
   
 
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
+      
+      <div class="article-meta">
+        <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2019/01/10/%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/" class="article-date">
-	  <time datetime="2019-01-10T02:34:05.000Z" itemprop="datePublished">1月 10</time>
+	<a href="/2023/03/06/webpack5%E5%86%85vue%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6%E6%8A%A5%E9%94%99-md/" class="article-date">
+	  <time datetime="2023-03-06T10:23:13.000Z" itemprop="datePublished">2023-03-06</time>
 	</a>
 </span>
-    
-    
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a>
+  </span>
 
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/01/10/%E5%87%BD%E6%95%B0%E6%9F%AF%E9%87%8C%E5%8C%96/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
 
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/09/javascript%E8%B7%A8%E5%9F%9F/">javascript跨域</a>
-    </h1>
-  
+        
 
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2023/03/06/webpack5%E5%86%85vue%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6%E6%8A%A5%E9%94%99-md/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>今天在一个webpack4升级到webpack5后的项目中，遇到了一个问题：<br />
+页面打开后，提示如下报错：</p>
+<pre><code class="hljs plaintext">ReferenceError: Cannot access &#x27;__WEBPACK_DEFAULT_EXPORT__&#x27; before initialization
+at Module.default (155747:3:42)
+at eval (index.vue?d775:50:1)</code></pre>
+<p>第一反应就是是不是webpack5哪里打包错误导致引用错误，然后进到项目文件里发现了一个递归组件</p>
+<pre><code class="hljs plaintext">import MenuTree from &#x27;@/views/help-center/components/menu-tree&#x27;;
+
+export default &#123;
+    name: &#x27;MenuTree&#x27;,
+    components: &#123;
+        MenuTree
+    &#125;,
+...    
+&#125;</code></pre>
+<p>结合报错信息，盲猜是打包的时候导入自身，而自身又没有引入引起的，于是将组件引入方法改成了动态引入</p>
+<pre><code class="hljs plaintext">export default &#123;
+    name: &#x27;MenuTree&#x27;,
+    components: &#123;
+        MenuTree: ()=&gt; import(&quot;./index.vue&quot;),
+    &#125;,
+...    
+&#125;</code></pre>
+<p>再打开页面，就发现正常工作了，详细原因日后补充，反正修好了</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://harrypangpang.github.io/2023/03/06/webpack5%E5%86%85vue%E9%80%92%E5%BD%92%E7%BB%84%E4%BB%B6%E6%8A%A5%E9%94%99-md/" title="webpack5内vue递归组件报错.md" target="_blank" rel="external">https://harrypangpang.github.io/2023/03/06/webpack5内vue递归组件报错-md/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/HarryPangPang" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/HarryPangPang" target="_blank"><span class="text-dark">HarryPangPang</span><small class="ml-1x">web developer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
   </div>
+</div>
+
+
+    </div>
+  </article>
   
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2019/01/09/javascript%E8%B7%A8%E5%9F%9F/" class="article-date">
-	  <time datetime="2019-01-09T13:11:52.000Z" itemprop="datePublished">1月 9</time>
-	</a>
-</span>
     
+  <section id="comments">
+  	
+           
     
+  </section>
 
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/01/09/javascript%E8%B7%A8%E5%9F%9F/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
 
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/01/%E5%89%8D%E7%AB%AF%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84/">前端进阶学习路径</a>
-    </h1>
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
   
-
-  </div>
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2023/02/23/centos%E5%AE%89%E8%A3%85node%E7%8E%AF%E5%A2%83(docker)/" title="centos安装node和docker"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
   
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2019/01/01/%E5%89%8D%E7%AB%AF%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84/" class="article-date">
-	  <time datetime="2019-01-01T05:58:14.000Z" itemprop="datePublished">1月 1</time>
-	</a>
-</span>
-    
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/01/01/%E5%89%8D%E7%AB%AF%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/01/JavaScript%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83-%E6%89%A7%E8%A1%8C%E6%A0%88/">JavaScript执行环境-执行栈</a>
-    </h1>
   
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2019/01/01/JavaScript%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83-%E6%89%A7%E8%A1%8C%E6%A0%88/" class="article-date">
-	  <time datetime="2019-01-01T05:52:08.000Z" itemprop="datePublished">1月 1</time>
-	</a>
-</span>
+  <div class="bar-right">
     
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2019/01/01/JavaScript%E6%89%A7%E8%A1%8C%E7%8E%AF%E5%A2%83-%E6%89%A7%E8%A1%8C%E6%A0%88/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-vue中AsyncAwait的使用示例" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/25/vue%E4%B8%ADAsyncAwait%E7%9A%84%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B/">vue中AsyncAwait的使用示例</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2018/12/25/vue%E4%B8%ADAsyncAwait%E7%9A%84%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B/" class="article-date">
-	  <time datetime="2018-12-25T05:47:23.000Z" itemprop="datePublished">12月 25</time>
-	</a>
-</span>
-    
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2018/12/25/vue%E4%B8%ADAsyncAwait%E7%9A%84%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/20/MySQL8-0-12-secure-file-priv%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">MySQL8.0.12--secure-file-priv数据导出问题解决</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2018/12/20/MySQL8-0-12-secure-file-priv%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" class="article-date">
-	  <time datetime="2018-12-20T06:10:03.000Z" itemprop="datePublished">12月 20</time>
-	</a>
-</span>
-    
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2018/12/20/MySQL8-0-12-secure-file-priv%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-postman" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/07/HTTP%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%8C%BA%E5%88%AB/">HTTP请求的四种方式区别</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2018/12/07/HTTP%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%8C%BA%E5%88%AB/" class="article-date">
-	  <time datetime="2018-12-07T05:46:28.000Z" itemprop="datePublished">12月 7</time>
-	</a>
-</span>
-    
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2018/12/07/HTTP%E8%AF%B7%E6%B1%82%E7%9A%84%E5%9B%9B%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%8C%BA%E5%88%AB/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/10/%E5%87%BD%E6%95%B0%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96/">函数节流与防抖</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2018/11/10/%E5%87%BD%E6%95%B0%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96/" class="article-date">
-	  <time datetime="2018-11-10T03:10:09.000Z" itemprop="datePublished">11月 10</time>
-	</a>
-</span>
-    
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2018/11/10/%E5%87%BD%E6%95%B0%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/07/%E5%A6%82%E4%BD%95%E8%AE%A9%E5%B0%8F%E5%AD%A9%E5%AD%A6%E4%B9%A0javascript/">如何让小孩学习javascript</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2018/11/07/%E5%A6%82%E4%BD%95%E8%AE%A9%E5%B0%8F%E5%AD%A9%E5%AD%A6%E4%B9%A0javascript/" class="article-date">
-	  <time datetime="2018-11-07T06:10:39.000Z" itemprop="datePublished">11月 7</time>
-	</a>
-</span>
-    
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2018/11/07/%E5%A6%82%E4%BD%95%E8%AE%A9%E5%B0%8F%E5%AD%A9%E5%AD%A6%E4%B9%A0javascript/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/17/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3es6%E4%B8%AD%E7%9A%84class%E4%BB%A5%E5%8F%8Aclass%E4%B8%AD%E7%9A%84constructor%E5%87%BD%E6%95%B0/">如何理解es6中的class以及class中的constructor函数</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2018/06/17/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3es6%E4%B8%AD%E7%9A%84class%E4%BB%A5%E5%8F%8Aclass%E4%B8%AD%E7%9A%84constructor%E5%87%BD%E6%95%B0/" class="article-date">
-	  <time datetime="2018-06-17T06:06:08.000Z" itemprop="datePublished">6月 17</time>
-	</a>
-</span>
-    
-    
-
-    <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2018/06/17/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3es6%E4%B8%AD%E7%9A%84class%E4%BB%A5%E5%8F%8Aclass%E4%B8%AD%E7%9A%84constructor%E5%87%BD%E6%95%B0/#comments" class="article-comment-link">评论</a></span>
-    
-  </p>
-</article>
-
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
     
   </div>
-
+  </div>
+</nav>
   
-    
-    <nav class="bar bar-footer clearfix" data-stick-bottom>
-        <div class="bar-inner">
-        <ul class="pager pull-left">
-            
-            <li class="prev">
-                <a href="/page/3/">
-                    <i class="icon icon-angle-left"></i>
-                    上一页
-                </a>
-            </li>
-            
-            
-            <li class="next">
-                <a href="/page/5/">
-                    下一页
-                    <i class="icon icon-angle-right"></i>
-                </a>
-            </li>
-            
-        </ul>
-            <div class="total-article bar-right">Page 4 of 5</div>
-        </div>
-    </nav>
-    
- 
+
+
 </main>
 
   <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
@@ -676,6 +513,28 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
    
 
 
+
+
+   
+    
+  <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"> -->
+  <script src="//cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+  <script type="text/javascript">
+  var gitalk = new Gitalk({
+    clientID: '109cd41cf54566dc4c4c',
+    clientSecret: 'e5b1bc7f8bb1c5a376d23cb52e00d951b310dac4',
+    repo: 'HarryPangPang.github.io',
+    owner: 'HarryPangPang',
+    admin: ['HarryPangPang'],
+    id: md5(location.pathname),
+    distractionFreeMode: true,
+    language: 'zh-CN',
+    enableHotKey: 'true'
+  })
+  gitalk.render('comments')
+  </script>
+      
 
 
 
