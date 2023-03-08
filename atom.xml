@@ -141,29 +141,6 @@
   </entry>
   
   <entry>
-    <title>github博客自动化部署</title>
-    <link href="https://harrypangpang.github.io/2022/02/17/gitpages%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/"/>
-    <id>https://harrypangpang.github.io/2022/02/17/gitpages%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/</id>
-    <published>2022-02-17T06:06:45.000Z</published>
-    <updated>2023-02-23T03:30:13.096Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="github博客自动化部署"><a class="markdownIt-Anchor" href="#github博客自动化部署"></a> github博客自动化部署</h3><p>原材料：github博客，<a href="http://travis-ci.org">travis-ci.org</a></p><ol><li>首先你有一个类似xxx.github.io的博客</li><li>打开 <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></li><li>点击Personal access tokens旁的generate new token</li><li>复制好这个token，之后会需要</li><li>打开 <a href="https://travis-ci.org/">https://travis-ci.org/</a></li><li>用github登陆</li><li>点击头像，打开settings，打开你所需要部署的仓库的开关（页面上很明显能找到）</li><li>在项目根目录新建.travis.yml，并输入下面</li></ol><pre><code class="hljs plaintext">language: node_jsnode_js:- lts/*cache:  directories:  - node_modulesinstall:- npm ciscript:- npm run docs:build #scripts里输入你自己的脚步，我这里是基于vuepress的- cd docs/.vuepress/dist- echo &#x27;你自己的网址域名&#x27; &gt; CNAME #如果你需要指向自己的域名after_script:- git config credential.helper &quot;store --file=.git/credentials&quot;- echo &quot;https://$&#123;GH_TOKEN&#125;:@github.com&quot; &gt; .git/credentials- node ./node_modules/grunt-cli/bin/grunt release- git config --global user.email &quot;邮箱&quot;- git config --global user.name &quot;用户名&quot;- git init- git add .- git commit -m &#x27;deploy&#x27;- git push -f &quot;https://$&#123;GH_TOKEN&#125;@github.com/test/test.github.io.git&quot; master #更换test内容，这里参照你自己的GitHub地址去改branches:  only:  - devdeploy:  provider: pages  skip-cleanup: true  local_dir: docs/.vuepress/dist  github_token: &quot;$GH_TOKEN&quot;  keep-history: true  on:    branch: dev</code></pre><ol start="9"><li>在电脑shell里输入</li></ol><pre><code class="hljs plaintext">gem install travistravis encrypt GH_TOKEN=&quot;第四步保存的key&quot; --add</code></pre><ol start="10"><li>这个时候你会发现你的.travis.yml会多出</li></ol><pre><code class="hljs plaintext">env:  global:    - secure: &quot;lots-of-seemingly-random-characters&quot;</code></pre><p>这句话，这其实就是加密后的token，用于push代码</p><ol start="11"><li>然后就像平常一样push代码，就会自动部署啦</li></ol>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h3 id=&quot;github博客自动化部署&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#github博客自动化部署&quot;&gt;&lt;/a&gt; github博客自动化部署&lt;/h3&gt;
-&lt;p&gt;原材料：github博客，&lt;a href=&quot;http://travis-ci.</summary>
-      
-    
-    
-    
-    
-    <category term="实践" scheme="https://harrypangpang.github.io/tags/%E5%AE%9E%E8%B7%B5/"/>
-    
-  </entry>
-  
-  <entry>
     <title>docker部署jenkins</title>
     <link href="https://harrypangpang.github.io/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/"/>
     <id>https://harrypangpang.github.io/2022/02/17/docker%E9%83%A8%E7%BD%B2jenkins/</id>
@@ -178,6 +155,29 @@
     <summary type="html">&lt;h4 id=&quot;docker部署jenkins&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#docker部署jenkins&quot;&gt;&lt;/a&gt; docker部署jenkins&lt;/h4&gt;
 &lt;p&gt;如何使用docker部署Jenkins？按下面步骤走：&lt;/p&gt;
 &lt;</summary>
+      
+    
+    
+    
+    
+    <category term="实践" scheme="https://harrypangpang.github.io/tags/%E5%AE%9E%E8%B7%B5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>github博客自动化部署</title>
+    <link href="https://harrypangpang.github.io/2022/02/17/gitpages%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/"/>
+    <id>https://harrypangpang.github.io/2022/02/17/gitpages%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/</id>
+    <published>2022-02-17T06:06:45.000Z</published>
+    <updated>2023-02-23T03:30:13.096Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="github博客自动化部署"><a class="markdownIt-Anchor" href="#github博客自动化部署"></a> github博客自动化部署</h3><p>原材料：github博客，<a href="http://travis-ci.org">travis-ci.org</a></p><ol><li>首先你有一个类似xxx.github.io的博客</li><li>打开 <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></li><li>点击Personal access tokens旁的generate new token</li><li>复制好这个token，之后会需要</li><li>打开 <a href="https://travis-ci.org/">https://travis-ci.org/</a></li><li>用github登陆</li><li>点击头像，打开settings，打开你所需要部署的仓库的开关（页面上很明显能找到）</li><li>在项目根目录新建.travis.yml，并输入下面</li></ol><pre><code class="hljs plaintext">language: node_jsnode_js:- lts/*cache:  directories:  - node_modulesinstall:- npm ciscript:- npm run docs:build #scripts里输入你自己的脚步，我这里是基于vuepress的- cd docs/.vuepress/dist- echo &#x27;你自己的网址域名&#x27; &gt; CNAME #如果你需要指向自己的域名after_script:- git config credential.helper &quot;store --file=.git/credentials&quot;- echo &quot;https://$&#123;GH_TOKEN&#125;:@github.com&quot; &gt; .git/credentials- node ./node_modules/grunt-cli/bin/grunt release- git config --global user.email &quot;邮箱&quot;- git config --global user.name &quot;用户名&quot;- git init- git add .- git commit -m &#x27;deploy&#x27;- git push -f &quot;https://$&#123;GH_TOKEN&#125;@github.com/test/test.github.io.git&quot; master #更换test内容，这里参照你自己的GitHub地址去改branches:  only:  - devdeploy:  provider: pages  skip-cleanup: true  local_dir: docs/.vuepress/dist  github_token: &quot;$GH_TOKEN&quot;  keep-history: true  on:    branch: dev</code></pre><ol start="9"><li>在电脑shell里输入</li></ol><pre><code class="hljs plaintext">gem install travistravis encrypt GH_TOKEN=&quot;第四步保存的key&quot; --add</code></pre><ol start="10"><li>这个时候你会发现你的.travis.yml会多出</li></ol><pre><code class="hljs plaintext">env:  global:    - secure: &quot;lots-of-seemingly-random-characters&quot;</code></pre><p>这句话，这其实就是加密后的token，用于push代码</p><ol start="11"><li>然后就像平常一样push代码，就会自动部署啦</li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;github博客自动化部署&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#github博客自动化部署&quot;&gt;&lt;/a&gt; github博客自动化部署&lt;/h3&gt;
+&lt;p&gt;原材料：github博客，&lt;a href=&quot;http://travis-ci.</summary>
       
     
     
